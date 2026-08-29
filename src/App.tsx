@@ -72,7 +72,9 @@ const App: React.FC = () => (
           }
         />
         <Route path="/shop" element={<Shop />} />
+        <Route path="/shop/product/:id" element={<ProductDetail />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/cart" element={<Checkout mode="cart" />} />
         <Route path="/trust" element={<TrustCentre />} />
         <Route
           path="/journey"

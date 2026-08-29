@@ -7,9 +7,10 @@ import { findProduct } from '../data/products'
 import { beginCheckout, getCheckoutStatus } from '../lib/commerce'
 
 type Step = 'cart' | 'delivery' | 'payment' | 'confirmation'
+type CheckoutMode = 'cart' | 'checkout'
 
-const Checkout: React.FC = () => {
-  const { cart, removeFromCart, clearCart, user, backendConfigured, trackEvent } = useApp()
+const Checkout: React.FC<{ mode?: CheckoutMode }> = ({ mode = 'checkout' }) => {
+  const { cart, removeFromCart, clearCart, user, backendConfigured, trackEvent, addToShelf, addJourneyEntry } = useApp()
   const navigate = useNavigate()
   const [step, setStep] = useState<Step>('cart')
   const [address, setAddress] = useState('')
@@ -25,25 +26,38 @@ const Checkout: React.FC = () => {
   const steps: Step[] = ['cart', 'delivery', 'payment', 'confirmation']
   const stepIndex = steps.indexOf(step)
 
+  const finalizeOrder = () => {
+    lineItems.forEach((item) => addToShelf(item.productId))
+    if (lineItems.length > 0) {
+      const joined = lineItems.map((item) => item.product!.name).join(', ')
+      addJourneyEntry({
+        id: `purchase-${Date.now()}`,
+        date: new Date().toISOString(),
+        note: `${joined} was purchased and added to your routine and shelf.`,
+        routineName: 'Routine refresh',
+      })
+    }
+    clearCart()
+    setStep('confirmation')
+  }
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const sessionId = params.get('session_id')
-    if (!backendConfigured || params.get('checkout') !== 'success' || !sessionId) return
+    if (mode !== 'checkout' || !backendConfigured || params.get('checkout') !== 'success' || !sessionId) return
     setProcessing(true)
     void getCheckoutStatus(sessionId)
       .then((result) => {
         if (!result.paid) throw new Error('Your payment is still being confirmed. Please refresh this page in a moment.')
-        clearCart()
-        setStep('confirmation')
+        finalizeOrder()
       })
       .catch((err) => setPaymentError(err instanceof Error ? err.message : 'We could not confirm this payment yet.'))
       .finally(() => setProcessing(false))
-  }, [backendConfigured])
+  }, [backendConfigured, mode])
 
   const placeOrder = async () => {
     if (!backendConfigured) {
-      clearCart()
-      setStep('confirmation')
+      finalizeOrder()
       return
     }
     try {
@@ -58,19 +72,96 @@ const Checkout: React.FC = () => {
     }
   }
 
-  if (step === 'confirmation') {
+  if (mode === 'cart') {
+    if (lineItems.length === 0) {
+      return (
+        <AppShell>
+          <div className="container-page max-w-md py-20 text-center">
+            <p className="text-sm text-charcoal/60">Your cart is empty.</p>
+            <button className="btn-primary mt-4" onClick={() => navigate('/shop')}>
+              Go to Shop
+            </button>
+          </div>
+        </AppShell>
+      )
+    }
+
     return (
       <AppShell>
-        <div className="container-page flex max-w-md flex-col items-center py-20 text-center">
+        <div className="container-page max-w-2xl py-8 sm:py-12">
+          <h1 className="font-display text-3xl text-forest-800">Your cart</h1>
+          <div className="mt-5 space-y-3">
+            {lineItems.map((item) => (
+              <div key={item.productId} className="card flex items-center gap-4 p-4">
+                <ProductVisual shape={item.product!.image} accent={item.product!.accent} className="h-16 w-16 shrink-0" />
+                <div className="flex-1">
+                  <p className="font-display text-base text-charcoal">{item.product!.name}</p>
+                  <p className="text-xs text-charcoal/50">Quantity: {item.quantity}</p>
+                </div>
+                <span className="font-display text-base text-forest-800">${item.product!.price * item.quantity}</span>
+                <button onClick={() => removeFromCart(item.productId)} className="text-xs font-semibold text-clay hover:underline">
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="card mt-5 p-5">
+            <div className="flex justify-between text-sm text-charcoal/70">
+              <span>Subtotal</span>
+              <span>${subtotal}</span>
+            </div>
+            <div className="mt-1 flex justify-between text-sm text-charcoal/70">
+              <span>Delivery</span>
+              <span>{delivery === 0 ? 'Free' : `$${delivery}`}</span>
+            </div>
+            <div className="mt-2 flex justify-between border-t border-forest/10 pt-2 font-semibold text-forest-800">
+              <span>Total</span>
+              <span>${total}</span>
+            </div>
+            <p className={`mt-2 text-xs font-medium ${total > budget ? 'text-clay' : 'text-forest-500'}`}>
+              {total > budget ? `This is $${total - budget} over your monthly budget of $${budget}.` : `Within your $${budget} monthly budget.`}
+            </p>
+          </div>
+
+          <div className="mt-6 space-y-3">
+            <div className="rounded-2xl border border-forest/10 bg-forest/5 p-4">
+              <h2 className="font-display text-lg text-forest-800">Your routine</h2>
+              <p className="mt-1 text-sm text-charcoal/60">This product completes your recommended evening routine.</p>
+              <p className="mt-3 text-sm font-medium text-charcoal/70">Already owned</p>
+            </div>
+            <button className="btn-primary w-full" onClick={() => navigate('/checkout')}>
+              Checkout
+            </button>
+          </div>
+        </div>
+      </AppShell>
+    )
+  }
+
+  if (step === 'confirmation') {
+    const orderedNames = lineItems.map((item) => item.product!.name)
+    const productName = orderedNames[0] ?? 'Your products'
+    return (
+      <AppShell>
+        <div className="container-page flex max-w-lg flex-col items-center py-20 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-forest text-2xl text-cream-100">✓</div>
-          <h1 className="mt-6 font-display text-2xl text-forest-800">Your routine is on its way.</h1>
-          <p className="mt-2 text-sm text-charcoal/60">Your payment is confirmed and your order is being prepared.</p>
+          <h1 className="mt-6 font-display text-3xl text-forest-800">Your routine just got better.</h1>
+          <p className="mt-2 text-sm text-charcoal/60">{productName} has been added to your skincare journey.</p>
+          <div className="mt-6 w-full rounded-2xl border border-forest/10 bg-cream-100 p-5 text-left">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-forest-600">Order confirmed</p>
+            <p className="mt-2 text-sm text-charcoal/70">Estimated delivery</p>
+            <p className="mt-1 font-display text-xl text-forest-800">3–5 business days</p>
+          </div>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <button className="btn-primary" onClick={() => navigate('/shop')}>
-              Continue Shopping
+            <button className="btn-primary" onClick={() => navigate('/routine-builder')}>
+              View my routine
+            </button>
+            <button className="btn-secondary" onClick={() => navigate('/shop')}>
+              Continue shopping
             </button>
             <button className="btn-secondary" onClick={() => navigate('/home')}>
-              View My Routine
+              Track order
             </button>
           </div>
         </div>
