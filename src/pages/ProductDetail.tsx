@@ -133,8 +133,8 @@ const ProductDetail: React.FC = () => {
             <p className="mt-1 text-sm text-charcoal/60">You already own {shelfProducts.length} products.</p>
             <div className="mt-4 space-y-2">
               {shelfProducts.slice(0, 4).map((item) => (
-                <div key={item.productId} className="flex items-center justify-between rounded-xl bg-forest/5 px-3 py-2 text-sm text-charcoal/75">
-                  <span>{findProduct(item.productId)?.name ?? 'Product'}</span>
+                <div key={item.id} className="flex items-center justify-between rounded-xl bg-forest/5 px-3 py-2 text-sm text-charcoal/75">
+                  <span>{item.name}</span>
                   <span className="font-semibold text-forest-700">✓</span>
                 </div>
               ))}
