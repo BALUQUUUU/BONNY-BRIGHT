@@ -112,3 +112,4 @@ button.home-card:hover .home-card__link span { transform:translateX(3px); }
 .header-search__result-copy { display:grid; min-width:0; gap:.12rem; }.header-search__result-copy b { overflow:hidden; color:#fffbed; font-size:.78rem; text-overflow:ellipsis; white-space:nowrap; }.header-search__result-copy small { overflow:hidden; color:rgba(222,230,207,.65); font-size:.66rem; text-overflow:ellipsis; white-space:nowrap; }
 .header-search__result-kind { flex:0 0 auto; color:var(--gold-soft); font-size:.61rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
 .header-search__empty { margin:0; padding:1rem; color:rgba(222,230,207,.7); font-size:.73rem; line-height:1.4; }
+.js #static-site-overview { display: none; } 
