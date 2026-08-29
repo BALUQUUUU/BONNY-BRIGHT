@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bonny &amp; Bright — Your skin, understood</title>
+    <script>
+      // Restore a route saved by public/404.html so copied links keep working
+      // on GitHub Pages, which otherwise only serves static files.
+      (function (location) {
+        if (location.search[1] === '/') {
+          const route = location.search
+            .slice(1)
+            .split('&')
+            .map((part) => part.replace(/~and~/g, '&'))
+            .join('?');
+          window.history.replaceState(null, '', location.pathname.slice(0, -1) + route + location.hash);
+        }
+      })(window.location);
+    </script>
+    <meta name="description" content="Bonny & Bright builds your skincare routine around your skin, your shelf, your budget and what you can trust." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="/bonny-and-bright/assets/index-_YVyX3rV.js"></script>
+    <link rel="stylesheet" crossorigin href="/bonny-and-bright/assets/index-Bm4M8DII.css">
+  </head>
+  <body class="bg-forest-900 text-cream-100 font-body antialiased">
+    <div id="root"></div>
+  </body>
+</html>
