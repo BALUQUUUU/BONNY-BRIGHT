@@ -1,0 +1,6 @@
+project_id = "your-project-ref"
+
+# Stripe authenticates its webhook itself. The handler verifies Stripe's signed
+# raw request body before doing any database work.
+[functions.stripe-webhook]
+verify_jwt = false
