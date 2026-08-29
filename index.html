@@ -19,6 +19,12 @@
       })(window.location);
     </script>
     <meta name="description" content="Bonny & Bright builds your skincare routine around your skin, your shelf, your budget and what you can trust." />
+    <meta name="robots" content="index, follow" />
+    <script>document.documentElement.classList.add('js')</script>
+    <style>
+      /* Keep the accessibility and crawler fallback out of the JavaScript app's visual UI. */
+      .js #static-site-overview { display: none; }
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -27,5 +33,19 @@
   </head>
   <body class="bg-forest-900 text-cream-100 font-body antialiased">
     <div id="root"></div>
+    <main id="static-site-overview">
+      <h1>Bonny &amp; Bright</h1>
+      <p>Bonny &amp; Bright is an interactive personal skincare platform. It helps people build a routine around their skin, the products they already own, their budget, and product trust information.</p>
+      <h2>What the app includes</h2>
+      <ul>
+        <li>A guided skin-profile onboarding journey.</li>
+        <li>An AI routine builder that considers skin needs, existing products, and budget.</li>
+        <li>A personal shelf to track skincare products already owned.</li>
+        <li>Product discovery, ingredient and sustainability trust information, shopping, subscription, store-locator, and progress-journey screens.</li>
+      </ul>
+      <h2>Important note</h2>
+      <p>This public version is a front-end prototype. Visitor preferences and demo activity are stored in that visitor's browser unless the optional Supabase and Stripe production services are configured.</p>
+      <p><a href="./about/">Read the full static site overview</a>.</p>
+    </main>
   </body>
 </html>

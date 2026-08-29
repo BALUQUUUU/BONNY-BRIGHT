@@ -1,0 +1,19 @@
+# Bonny & Bright
+
+> An interactive personal skincare platform that uses a visitor's skin needs, existing products, budget, and trust information to shape routines and product discovery.
+
+## Static overview
+
+- [About Bonny & Bright](./about/): JavaScript-free overview of the product, features, and prototype limitations.
+
+## Main application areas
+
+- Guided skin-profile onboarding
+- Routine Builder and personalised recommendations
+- My Shelf for existing products
+- Product discovery, shopping, trust centre, and product detail screens
+- Skin Journey, subscriptions, store locator, account settings, and an admin dashboard
+
+## Deployment note
+
+The public site is a front-end prototype. Demo activity is stored in each visitor's browser unless optional Supabase and Stripe production services are configured.
